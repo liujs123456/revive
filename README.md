@@ -1,10 +1,12 @@
 # revive
 
-Find your forgotten side projects and figure out what to ship next.
+> Find your forgotten side projects and figure out what to ship next.
 
 revive scans your local Desktop and your GitHub account for code projects, assesses each one's "health" with Claude, and generates concrete suggestions for what to build, fix, or polish next — across four dimensions: technical, features, resume polish, and pivot ideas.
 
 Built for the developer who has 30 half-finished side projects and wants to revive the ones worth shipping.
+
+![Dashboard — every project, every health badge, in one view](public/dashboard.png)
 
 ---
 
@@ -18,6 +20,8 @@ Built for the developer who has 30 half-finished side projects and wants to revi
   - **Resume polish** — README, demo, deployment, screenshots
   - **Pivot** — bold reinventions for dead projects
 - Each suggestion is tagged with **effort** (S/M/L) and **impact** (L/M/H)
+
+![Project detail — Claude's diagnosis + 6 categorized suggestions per project](public/analysis.png)
 
 ## Stack
 
