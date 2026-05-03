@@ -21,6 +21,7 @@ import {
   Lightbulb,
   FileText,
   Repeat,
+  FolderOpen,
 } from "lucide-react";
 import type { Project, Suggestion, SuggestionCategory } from "@/lib/types";
 
@@ -131,6 +132,22 @@ export default function ProjectDetail({ params }: { params: Promise<{ id: string
                 <ExternalLink className="h-3 w-3" />
                 Open on GitHub
               </a>
+            )}
+            {project.source === "local" && (
+              <button
+                type="button"
+                onClick={async () => {
+                  const res = await fetch(`/api/projects/${id}/reveal`, { method: "POST" });
+                  if (!res.ok) {
+                    const err = await res.json();
+                    toast.error(err.error ?? "Failed to open in Finder");
+                  }
+                }}
+                className="inline-flex items-center gap-1 hover:text-foreground cursor-pointer"
+              >
+                <FolderOpen className="h-3 w-3" />
+                Reveal in Finder
+              </button>
             )}
           </div>
         </header>

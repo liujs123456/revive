@@ -56,7 +56,19 @@ npm run dev
 # open http://localhost:3000
 ```
 
-Click **Scan projects** (first scan takes ~10–30s depending on # of GitHub repos), pick a project, click **Analyze with Claude** (~20s for 6 suggestions).
+First visit goes to a setup wizard — paste your Anthropic key + GitHub token, click Test on each, click Save. From then on you hit the dashboard directly.
+
+Click **Scan projects** (first scan takes ~10–30s depending on # of GitHub repos). For projects you haven't analyzed yet, click **Analyze all** in the banner at the top of the dashboard, or open one project and click **Analyze with Claude** (~20s for 6 suggestions per project). Search + source/health filters help once you have many projects.
+
+### One-click launch (macOS)
+
+Tired of running `npm run dev` from a terminal every time? Build a Mac app launcher:
+
+```bash
+bash scripts/build-mac-app.sh
+```
+
+This creates `~/Applications/Revive.app`. Drag it to your Dock — clicking it starts the dev server and opens the dashboard in one step. If the server's already running, it just opens the browser.
 
 ## Cost
 
@@ -84,12 +96,14 @@ lib/
 
 ## Roadmap
 
-- [ ] Setup wizard (no more `.env.local` editing)
-- [ ] Bulk "Analyze all" with progress
-- [ ] Search + filter (by health, language, source)
-- [ ] Open local project in Finder / VS Code
+- [x] Setup wizard (no more `.env.local` editing)
+- [x] Bulk "Analyze all" with progress + cost estimate
+- [x] Search + filter (source, health status)
+- [x] Open local project in Finder
+- [x] One-click Mac app launcher
 - [ ] Render project README in detail view
 - [ ] Cross-project insights ("you have 3 abandoned scrapers — consolidate?")
+- [ ] VS Code / editor open buttons
 
 ## License
 
