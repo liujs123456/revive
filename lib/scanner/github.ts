@@ -1,15 +1,14 @@
 import { Octokit } from "@octokit/rest";
 import crypto from "node:crypto";
+import { getConfig } from "../config";
 import type { Project, ProjectMetadata } from "../types";
 
-let _octokit: Octokit | null = null;
-
 function getOctokit(): Octokit {
-  if (_octokit) return _octokit;
-  const auth = process.env.GITHUB_TOKEN;
-  if (!auth) throw new Error("GITHUB_TOKEN is not set in .env.local");
-  _octokit = new Octokit({ auth });
-  return _octokit;
+  const auth = getConfig().githubToken;
+  if (!auth) {
+    throw new Error("GitHub token is not configured. Visit /setup to add it.");
+  }
+  return new Octokit({ auth });
 }
 
 function projectId(fullName: string): string {

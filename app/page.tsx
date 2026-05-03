@@ -1,18 +1,35 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProjectCard } from "@/components/project-card";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { RefreshCw, Sparkles } from "lucide-react";
+import { RefreshCw, Sparkles, Settings } from "lucide-react";
 import type { Project, ScanResult } from "@/lib/types";
 
 export default function Dashboard() {
+  const router = useRouter();
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [scanning, setScanning] = useState(false);
+  const [configChecked, setConfigChecked] = useState(false);
+
+  // Gate: if not configured, redirect to /setup
+  useEffect(() => {
+    fetch("/api/config")
+      .then((r) => r.json())
+      .then((c) => {
+        if (!c.isComplete) {
+          router.replace("/setup");
+        } else {
+          setConfigChecked(true);
+        }
+      });
+  }, [router]);
 
   async function loadProjects() {
     const res = await fetch("/api/projects");
@@ -45,8 +62,8 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    loadProjects();
-  }, []);
+    if (configChecked) loadProjects();
+  }, [configChecked]);
 
   const local = projects?.filter((p) => p.source === "local") ?? [];
   const github = projects?.filter((p) => p.source === "github") ?? [];
@@ -65,10 +82,17 @@ export default function Dashboard() {
               Find your forgotten side projects and figure out what to ship next.
             </p>
           </div>
-          <Button onClick={runScan} disabled={scanning} size="lg">
-            <RefreshCw className={`h-4 w-4 ${scanning ? "animate-spin" : ""}`} />
-            {scanning ? "Scanning…" : "Scan projects"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Link href="/setup">
+              <Button variant="outline" size="lg" title="Edit configuration">
+                <Settings className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Button onClick={runScan} disabled={scanning} size="lg">
+              <RefreshCw className={`h-4 w-4 ${scanning ? "animate-spin" : ""}`} />
+              {scanning ? "Scanning…" : "Scan projects"}
+            </Button>
+          </div>
         </header>
 
         {projects === null ? (

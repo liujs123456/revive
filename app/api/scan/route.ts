@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { scanLocalProjects } from "@/lib/scanner/local";
 import { scanGithubRepos } from "@/lib/scanner/github";
 import { upsertProject, listProjects } from "@/lib/db";
+import { getConfig } from "@/lib/config";
 import type { Project, ScanResult } from "@/lib/types";
 
 export async function POST(req: Request) {
@@ -10,17 +11,17 @@ export async function POST(req: Request) {
   };
   const enabled = sources ?? ["local", "github"];
 
+  const config = getConfig();
   const result: ScanResult = { scanned: 0, added: 0, updated: 0, errors: [] };
   const existing = new Set(listProjects().map((p) => p.id));
   const newProjects: Project[] = [];
 
   if (enabled.includes("local")) {
-    const localPath = process.env.LOCAL_SCAN_PATH;
-    if (!localPath) {
-      result.errors.push("LOCAL_SCAN_PATH not set");
+    if (!config.localScanPath) {
+      result.errors.push("Local scan path not configured");
     } else {
       try {
-        const local = scanLocalProjects(localPath);
+        const local = scanLocalProjects(config.localScanPath);
         newProjects.push(...local);
       } catch (err) {
         result.errors.push(`Local scan failed: ${(err as Error).message}`);
@@ -29,12 +30,11 @@ export async function POST(req: Request) {
   }
 
   if (enabled.includes("github")) {
-    const username = process.env.GITHUB_USERNAME;
-    if (!username) {
-      result.errors.push("GITHUB_USERNAME not set");
+    if (!config.githubUsername || !config.githubToken) {
+      result.errors.push("GitHub credentials not configured");
     } else {
       try {
-        const gh = await scanGithubRepos(username);
+        const gh = await scanGithubRepos(config.githubUsername);
         newProjects.push(...gh);
       } catch (err) {
         result.errors.push(`GitHub scan failed: ${(err as Error).message}`);

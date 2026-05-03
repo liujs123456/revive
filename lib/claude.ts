@@ -1,15 +1,14 @@
 import Anthropic from "@anthropic-ai/sdk";
-
-let _client: Anthropic | null = null;
+import { getConfig } from "./config";
 
 export function getClaude(): Anthropic {
-  if (_client) return _client;
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = getConfig().anthropicApiKey;
   if (!apiKey) {
-    throw new Error("ANTHROPIC_API_KEY is not set in .env.local");
+    throw new Error(
+      "Anthropic API key is not configured. Visit /setup to add it."
+    );
   }
-  _client = new Anthropic({ apiKey });
-  return _client;
+  return new Anthropic({ apiKey });
 }
 
 export const MODELS = {
